@@ -13,33 +13,30 @@ final class ViewController: UIViewController {
     var forseDouble: Double = 0.0
     var durationDouble: Double = 0.0
     var delayDouble: Double = 0.0
+    var randomAnimation = ""
+    var randomCurve = ""
     
     private let app = SpringApp.getSpringApp()
-    
     
     @IBOutlet var springAnimationView: SpringView!
     
     @IBOutlet var forseValueLabel: UILabel!
     @IBOutlet var durationValueLabel: UILabel!
     @IBOutlet var delayValeeLabel: UILabel!
-    
-    
+
     @IBOutlet var forseSlider: UISlider!
     @IBOutlet var durationSlider: UISlider!
     @IBOutlet var delaySlider: UISlider!
     
-    @IBOutlet var curveButton: SpringButton!
-    @IBOutlet var animationButton: SpringButton!
+    @IBOutlet var carrentAnimationLabel: UILabel!
+    @IBOutlet var currentCurveLabel: UILabel!
+    
+    @IBOutlet var goButton: SpringButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addVerticalGradientLayer()
-        springAnimationView.layer.cornerRadius = 10
-        animationButton.layer.cornerRadius = 10
-        curveButton.layer.cornerRadius = 10
-        forseSlider.transform = CGAffineTransformMakeRotation(CGFloat(Double.pi / 2))
-        durationSlider.transform = CGAffineTransformMakeRotation(CGFloat(Double.pi / 2))
-        delaySlider.transform = CGAffineTransformMakeRotation(CGFloat(Double.pi / 2))
+        settingView()
     }
 
     @IBAction func moveSlider(_ sender: UISlider) {
@@ -47,7 +44,6 @@ final class ViewController: UIViewController {
         case forseSlider:
             setValueLabel(for: forseValueLabel)
             forseDouble = Double(forseValueLabel.text ?? "") ?? 0.0
-            //print(forseDouble)
         case durationSlider:
             setValueLabel(for: durationValueLabel)
             durationDouble = Double(durationValueLabel.text ?? "") ?? 0.0
@@ -57,19 +53,23 @@ final class ViewController: UIViewController {
         }
     }
     
-    @IBAction func tapAnimationButton(_ sender: SpringButton) {
-    
-        sender.setTitle("animation: \(app.present[0])", for: .normal)
-        
-        springAnimationView.animation = app.present[0]
+    @IBAction func tapGoButton(_ sender: SpringButton) {
+        springAnimationView.animation = randomAnimation
+        springAnimationView.curve = randomCurve
         springAnimationView.force = forseDouble
         springAnimationView.duration = durationDouble
         springAnimationView.delay = delayDouble
         springAnimationView.animate()
     }
     
-    @IBAction func tapCurveButton(_ sender: SpringButton) {
-        sender.setTitle("curve: \(app.curve[0])", for: .normal)
+    @IBAction func nextAnimationButton(_ sender: SpringButton) {
+        getRandomAnimation()
+        carrentAnimationLabel.text = "animation: \(randomAnimation)"
+    }
+    
+    @IBAction func nextCurveButton(_ sender: SpringButton) {
+        getRandomCurve()
+        currentCurveLabel.text = "curve: \(randomCurve)"
     }
 
     private func string(from slider: UISlider) -> String {
@@ -84,6 +84,34 @@ final class ViewController: UIViewController {
             default: label.text = string(from: delaySlider)
             }
         }
+    }
+    
+    private func getRandomAnimation() {
+        if app.present.isEmpty == false {
+            randomAnimation = app.present.randomElement() ?? ""
+        }
+    }
+    
+    private func getRandomCurve() {
+        if app.curve.isEmpty == false {
+            randomCurve = app.curve.randomElement() ?? ""
+        }
+    }
+    
+    private func settingView() {
+        randomAnimation = app.present[0]
+        randomCurve = app.curve[0]
+        carrentAnimationLabel.text = "animation: \(randomAnimation)"
+        currentCurveLabel.text = "curve: \(randomCurve)"
+        forseDouble = Double(forseValueLabel.text ?? "") ?? 0.0
+        durationDouble = Double(durationValueLabel.text ?? "") ?? 0.0
+        delayDouble = Double(delayValeeLabel.text ?? "") ?? 0.0
+        springAnimationView.layer.cornerRadius = 10
+        goButton.layer.cornerRadius = 10
+        setValueLabel(for: forseValueLabel, durationValueLabel, delayValeeLabel)
+        forseSlider.transform = CGAffineTransformMakeRotation(CGFloat(Double.pi / 2))
+        durationSlider.transform = CGAffineTransformMakeRotation(CGFloat(Double.pi / 2))
+        delaySlider.transform = CGAffineTransformMakeRotation(CGFloat(Double.pi / 2))
     }
     
 }
